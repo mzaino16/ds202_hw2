@@ -1,0 +1,117 @@
+---
+title: "Homework 2"
+author: "Mike Zaino; Github Username: mzaino16"
+date: "2/1/2020"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This homework is about syntax and basic plotting functions in R, and is **due by the end of Feb 7**. 
+
+You can use the RMarkDown file with these homework instructions as a template for your work. 
+Make sure to replace "Your Name" and "your_github_username" in the YAML with your name and Github username.
+
+**Submission instructions**: Create a folder named `ds202_hw2`, and name the RMarkDown file including your solutions `hw2.Rmd` under this folder. For submission, create a GitHub repository named `ds202_hw2` under your account, and push both `hw2.Rmd` and the knitted `hw2.html` to GitHub before the deadline. I will assume you use the same GitHub username as for your HW1 submission. The latest version of your homework appearing on GitHub before the deadline is graded. *It is crucial to follow the exact folder structure and file names*, so that your homework can be reproduced and graded by an automated script. Some questions will require the following answer format.
+
+## Example question and answer
+0\. What is the smallest positive odd integer? Storage it in a variable named `a0` and print it.
+
+**Example answer**:
+In the RMarkDown file, type in
+<pre><code>```{r}
+a0 <- 1
+a0
+```</code></pre>
+The knitted html file will show:
+```{r}
+a0 <- 1
+a0
+```
+
+## R commands
+1. Today's temperature has a high of 24 and a low of 15 degree fahrenheit.  Find the corresponding degress in celsius and storage it in a (single) vector named `cel`. Print the variable.
+
+```{r}
+low <- (15-32)*5/9
+high <- (24-32)*5/9
+cel <- c(low,high)
+cel
+```
+
+2. Create a vector of length 200. The odd entries should be 3 and even entries should be 1. Storage the created in a variable named `vec200` and print.
+
+```{r}
+vec200 <- rep(c(3,1) , length.out =200)
+vec200
+```
+
+3. How many perfect squares are there between 1 and 2001? Storage the answer in a  variable named `numPerfect` and print. You may want to look at `?round`.
+
+```{r}
+numPerfect <- sum(round(sqrt(1:2001) %% 1 == 0))
+numPerfect
+```
+
+## Cars and mileage
+For this part we will use the `mpg` data set, you can access the data by first installing (using `install.packages('ggplot2')`) and then loading the package `ggplot2` (using `library(ggplot2)`) into your R session. The `mpg` data includes information about fuel economy of popular car models
+for the years 1999 and 2008 as collected by the US Environmental Protection Agency. An answer should include a short paragraph of text for the explanation to a (human) reader, together with appropriate R code, outputs, and graphs.
+
+Most exercises are from the ggplot2 book section 2.2.1. You might find it helpful for working on the homework to read through this section. *However, all questions can be solved by using just the basic R graphics functions.*
+
+1. What are the 3 most fuel-efficient models in terms of highway mileage? Storage the data frame (with 3 rows) containing all information of these three cars in a variable named `top3` and print.
+
+```{r}
+library(ggplot2)
+top3 <- head(mpg[order(mpg$hwy, decreasing=T),], n=3)
+top3
+```
+
+We can see that the top 3 are all volkswagen. The models are 1999 Jetta manual, 1999 New Beetle manual, and 1999 New beetle auto.
+
+2. How many different compact models are included in this dataset? Storage the answer in  a variable named `numCompact` and print.
+
+```{r}
+table(mpg$class)
+numCompact <- subset(mpg, class == 'compact')
+numCompact
+```
+
+First, the table shows what the compact category is called. So, we can create a dataset that are only those types of cars. When we run it, we can see that we get 47 entries total. So, there are 47 compact models.
+
+3. Create a scatterplot of `hwy` and `cty` and describe the relationship. Why are there so few points visible? Explain your findings.
+
+```{r}
+ggplot(mpg, aes(x=hwy, y=cty)) + geom_point(shape=16, size=3) +theme_bw()
+```
+
+There are so few points visible because our data set has many entries that are the same. So these data points are being graphed on top of one another.
+
+4. Are cars in 2008 more fuel efficient than cars in 1999? Use graphs *and* summary statistics to answer this question. Explain your findings.
+
+```{r}
+cars2008 <- subset(mpg, year == 2008)
+cars1999 <- subset(mpg, year == 1999)
+
+par(mfrow=c(1,2))
+hist(cars1999$hwy, main="Histogram of 1999 Cars", xlab="Highway MPG")
+hist(cars2008$hwy, main="Histogram of 2008 Cars", xlab="Highway MPG")
+
+par(mfrow=c(1,2))
+hist(cars1999$cty, main="Histogram of 1999 Cars", xlab="City MPG")
+hist(cars2008$cty, main="Histogram of 2008 Cars", xlab="City MPG")
+
+mean(cars1999$hwy)
+mean(cars2008$hwy)
+mean(cars1999$cty)
+mean(cars2008$cty)
+```
+
+First, I created two new data sets. The first dataset is with all entries for 1999 and the other with all entries for 2008. The first group of histograms, we can see that both 1999 and 2008 highway driving have a similar distribution.In the city histograms, we can see that 1999 may have a higher MPG. Lastly, I looked at the means of both highway and city driving for 1999 and 2008. We can see that highway MPG is statistically the same and that 1999 city MPG is higher than 2008 city MPG. So, based on our data, we can say that 2008 cars are not more efficient thatn 1999 cars.
+
+
+Note: your submission is supposed to be fully reproducible, i.e. the TA and I will 'knit' your submission. Make sure that you don't use any file structure that depends on your computing environment.
+
